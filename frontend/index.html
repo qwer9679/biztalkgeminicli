@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizTone Converter - 업무 말투 변환기</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>BizTone Converter</h1>
+            <p>당신의 일상 언어를 프로페셔널한 비즈니스 언어로 변환하세요.</p>
+        </header>
+
+        <main>
+            <!-- 입력 섹션 -->
+            <section class="input-section">
+                <div class="controls">
+                    <label for="target-select">변환 대상:</label>
+                    <select id="target-select">
+                        <option value="boss" selected>상사 (보고/격식)</option>
+                        <option value="colleague">타팀 동료 (협업/정중)</option>
+                        <option value="customer">고객 (공식/서비스)</option>
+                    </select>
+                </div>
+
+                <div class="text-input-wrapper">
+                    <textarea id="input-text" placeholder="변환하고 싶은 말을 입력하세요. (예: 이거 좀 늦을 것 같아)" maxlength="500"></textarea>
+                    <div class="char-count"><span id="current-count">0</span> / 500</div>
+                </div>
+
+                <button id="convert-btn">말투 변환하기</button>
+            </section>
+
+            <!-- 결과 섹션 -->
+            <section class="result-section" id="result-section" style="display: none;">
+                <div class="comparison-container">
+                    <div class="card original-card">
+                        <h3>원본 텍스트</h3>
+                        <p id="original-text-display"></p>
+                    </div>
+                    <div class="card converted-card">
+                        <h3>변환 결과</h3>
+                        <p id="converted-text-display"></p>
+                        <div class="actions">
+                            <button id="copy-btn" class="secondary-btn">
+                                <span class="icon">📋</span> 복사하기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="feedback-area">
+                    <span>결과가 마음에 드시나요?</span>
+                    <button class="feedback-btn" data-type="like">👍</button>
+                    <button class="feedback-btn" data-type="dislike">👎</button>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>© 2024 BizTone Converter. All rights reserved.</p>
+        </footer>
+    </div>
+    
+    <!-- 로딩 인디케이터 -->
+    <div id="loading-overlay" class="hidden">
+        <div class="spinner"></div>
+        <p>AI가 적절한 표현을 고민 중입니다...</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
