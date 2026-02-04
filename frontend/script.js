@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const feedbackBtns = document.querySelectorAll('.feedback-btn');
 
     // Constants
-    const API_URL = 'http://127.0.0.1:5000/api/convert'; // Local Flask Server URL
+    const API_URL = '/api/convert'; // 상대 경로 사용 (백엔드 서빙 대응)
     const MAX_LENGTH = 500;
 
     // 1. Character Count Logic
