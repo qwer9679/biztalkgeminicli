@@ -17,36 +17,46 @@
 
         <main>
             <!-- 입력 섹션 -->
-            <section class="input-section">
+            <section class="input-section" aria-labelledby="input-heading">
+                <h2 id="input-heading" class="sr-only">텍스트 입력 및 대상 선택</h2>
                 <div class="controls">
                     <label for="target-select">변환 대상:</label>
-                    <select id="target-select">
-                        <option value="boss" selected>상사 (보고/격식)</option>
-                        <option value="colleague">타팀 동료 (협업/정중)</option>
-                        <option value="customer">고객 (공식/서비스)</option>
-                    </select>
+                    <div class="select-wrapper">
+                        <select id="target-select" aria-describedby="target-hint">
+                            <option value="boss" selected>상사 (보고/격식)</option>
+                            <option value="colleague">타팀 동료 (협업/정중)</option>
+                            <option value="customer">고객 (공식/서비스)</option>
+                        </select>
+                        <div id="target-hint" class="tooltip">상대방에 따라 말투가 달라집니다.</div>
+                    </div>
                 </div>
 
                 <div class="text-input-wrapper">
-                    <textarea id="input-text" placeholder="변환하고 싶은 말을 입력하세요. (예: 이거 좀 늦을 것 같아)" maxlength="500"></textarea>
-                    <div class="char-count"><span id="current-count">0</span> / 500</div>
+                    <textarea id="input-text" 
+                        placeholder="변환하고 싶은 말을 입력하세요. (예: 이거 좀 늦을 것 같아)" 
+                        maxlength="500" 
+                        aria-label="변환할 텍스트 입력"></textarea>
+                    <div class="char-count" aria-live="polite">
+                        <span id="current-count">0</span> / 500
+                    </div>
                 </div>
 
-                <button id="convert-btn">말투 변환하기</button>
+                <button id="convert-btn" aria-busy="false">말투 변환하기</button>
             </section>
 
             <!-- 결과 섹션 -->
-            <section class="result-section" id="result-section" style="display: none;">
+            <section class="result-section" id="result-section" style="display: none;" aria-labelledby="result-heading">
+                <h2 id="result-heading" class="sr-only">변환 결과 확인</h2>
                 <div class="comparison-container">
                     <div class="card original-card">
                         <h3>원본 텍스트</h3>
-                        <p id="original-text-display"></p>
+                        <div class="text-display" id="original-text-display"></div>
                     </div>
                     <div class="card converted-card">
                         <h3>변환 결과</h3>
-                        <p id="converted-text-display"></p>
+                        <div class="text-display" id="converted-text-display"></div>
                         <div class="actions">
-                            <button id="copy-btn" class="secondary-btn">
+                            <button id="copy-btn" class="secondary-btn" aria-label="결과 텍스트 복사">
                                 <span class="icon">📋</span> 복사하기
                             </button>
                         </div>
@@ -55,8 +65,10 @@
                 
                 <div class="feedback-area">
                     <span>결과가 마음에 드시나요?</span>
-                    <button class="feedback-btn" data-type="like">👍</button>
-                    <button class="feedback-btn" data-type="dislike">👎</button>
+                    <div class="feedback-btns">
+                        <button class="feedback-btn" data-type="like" aria-label="도움됨">👍</button>
+                        <button class="feedback-btn" data-type="dislike" aria-label="도움안됨">👎</button>
+                    </div>
                 </div>
             </section>
         </main>

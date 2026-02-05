@@ -45,29 +45,74 @@ header p {
     color: var(--text-sub);
 }
 
-/* Input Section */
-.input-section {
-    background: var(--card-bg);
-    padding: 2rem;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-sm);
-    margin-bottom: 2rem;
+/* Accessibility */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
 }
 
+/* Input Section Enhancement */
 .controls {
-    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
-label {
-    font-weight: 500;
-    margin-right: 0.5rem;
+.select-wrapper {
+    position: relative;
+    display: inline-block;
 }
 
 select {
-    padding: 0.5rem;
+    padding: 0.6rem 1rem;
     border: 1px solid var(--border-color);
     border-radius: var(--radius);
     font-size: 1rem;
+    background-color: white;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.tooltip {
+    font-size: 0.75rem;
+    color: var(--text-sub);
+    margin-top: 0.25rem;
+}
+
+/* Result Section Enhancement */
+.result-section {
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.text-display {
+    min-height: 100px;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.feedback-btns {
+    display: inline-flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
 }
 
 .text-input-wrapper {

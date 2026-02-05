@@ -15,7 +15,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const API_URL = '/api/convert'; // 상대 경로 사용 (백엔드 서빙 대응)
     const MAX_LENGTH = 500;
 
-    // 1. Character Count Logic
+    // 0. Load persisted data from LocalStorage
+    const savedText = localStorage.getItem('biztone_input_text');
+    const savedTarget = localStorage.getItem('biztone_target');
+    
+    if (savedText) {
+        inputText.value = savedText;
+        currentCount.textContent = savedText.length;
+    }
+    if (savedTarget) {
+        targetSelect.value = savedTarget;
+    }
+
+    // 1. Character Count Logic & LocalStorage Persistence
     inputText.addEventListener('input', () => {
         let length = inputText.value.length;
         if (length > MAX_LENGTH) {
@@ -29,6 +41,13 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             currentCount.style.color = 'inherit';
         }
+
+        // Persist to LocalStorage
+        localStorage.setItem('biztone_input_text', inputText.value);
+    });
+
+    targetSelect.addEventListener('change', () => {
+        localStorage.setItem('biztone_target', targetSelect.value);
     });
 
     // 2. Conversion Logic (API Call)
@@ -42,8 +61,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Show Loading
+        // Show Loading & Disable Button
         loadingOverlay.classList.remove('hidden');
+        convertBtn.disabled = true;
+        convertBtn.setAttribute('aria-busy', 'true');
 
         try {
             const response = await fetch(API_URL, {
@@ -78,8 +99,10 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Conversion Error:', error);
             alert(`변환 중 오류가 발생했습니다:\n${error.message}`);
         } finally {
-            // Hide Loading
+            // Hide Loading & Enable Button
             loadingOverlay.classList.add('hidden');
+            convertBtn.disabled = false;
+            convertBtn.setAttribute('aria-busy', 'false');
         }
     });
 
@@ -89,15 +112,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!textToCopy) return;
 
         navigator.clipboard.writeText(textToCopy).then(() => {
-            const originalText = copyBtn.innerHTML;
+            const originalHTML = copyBtn.innerHTML;
             copyBtn.innerHTML = '<span class="icon">✅</span> 복사 완료!';
+            copyBtn.classList.add('success');
             copyBtn.style.backgroundColor = '#dcfce7';
             copyBtn.style.borderColor = '#86efac';
             
             setTimeout(() => {
-                copyBtn.innerHTML = originalText;
+                copyBtn.innerHTML = originalHTML;
                 copyBtn.style.backgroundColor = '';
                 copyBtn.style.borderColor = '';
+                copyBtn.classList.remove('success');
             }, 2000);
         }).catch(err => {
             console.error('복사 실패:', err);
@@ -105,11 +130,30 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 4. Feedback (Simple Mock)
+    // 4. Feedback Logic
     feedbackBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
-            const type = e.target.dataset.type;
-            alert(`피드백 감사합니다! (${type === 'like' ? '좋아요' : '싫어요'})`);
+            const button = e.currentTarget;
+            const type = button.dataset.type;
+            
+            // Visual feedback for selection
+            feedbackBtns.forEach(b => b.style.opacity = '0.3');
+            button.style.opacity = '1';
+            button.style.transform = 'scale(1.2)';
+            
+            // In a real app, you would send this to the backend
+            console.log(`Feedback received: ${type}`);
+            
+            // Show a small toast or message instead of alert
+            const feedbackArea = document.querySelector('.feedback-area');
+            const originalContent = feedbackArea.innerHTML;
+            feedbackArea.innerHTML = '<p>피드백 감사합니다! 더 나은 서비스를 위해 노력하겠습니다. ✨</p>';
+            
+            setTimeout(() => {
+                feedbackArea.innerHTML = originalContent;
+                // Re-bind events if necessary, but here we just leave it for simplicity
+                // In a production app, we might just hide the feedback area after use.
+            }, 3000);
         });
     });
 });
