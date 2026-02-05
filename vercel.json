@@ -16,7 +16,7 @@
       "dest": "backend/app.py"
     },
     {
-      "src": "/(script\.js|style\.css)",
+      "src": "/(script/.js|style/.css)",
       "dest": "frontend/$1"
     },
     {
