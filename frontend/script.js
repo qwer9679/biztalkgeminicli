@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const feedbackBtns = document.querySelectorAll('.feedback-btn');
 
     // Constants
-    const API_URL = '/api/convert'; // 상대 경로 사용 (백엔드 서빙 대응)
+    const API_URL = '/api/convert'; 
     const MAX_LENGTH = 500;
 
     // 0. Load persisted data from LocalStorage
@@ -37,9 +37,11 @@ document.addEventListener('DOMContentLoaded', () => {
         currentCount.textContent = length;
         
         if (length >= MAX_LENGTH) {
-            currentCount.style.color = 'red';
+            currentCount.classList.add('text-red-500');
+            currentCount.classList.remove('text-slate-400');
         } else {
-            currentCount.style.color = 'inherit';
+            currentCount.classList.remove('text-red-500');
+            currentCount.classList.add('text-slate-400');
         }
 
         // Persist to LocalStorage
@@ -65,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadingOverlay.classList.remove('hidden');
         convertBtn.disabled = true;
         convertBtn.setAttribute('aria-busy', 'true');
+        convertBtn.classList.add('opacity-70', 'cursor-not-allowed');
 
         try {
             const response = await fetch(API_URL, {
@@ -90,10 +93,12 @@ document.addEventListener('DOMContentLoaded', () => {
             convertedTextDisplay.textContent = data.converted;
             
             // Show Result Section
-            resultSection.style.display = 'block';
+            resultSection.classList.remove('hidden');
             
             // Scroll to Result
-            resultSection.scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
 
         } catch (error) {
             console.error('Conversion Error:', error);
@@ -103,6 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
             loadingOverlay.classList.add('hidden');
             convertBtn.disabled = false;
             convertBtn.setAttribute('aria-busy', 'false');
+            convertBtn.classList.remove('opacity-70', 'cursor-not-allowed');
         }
     });
 
@@ -112,17 +118,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!textToCopy) return;
 
         navigator.clipboard.writeText(textToCopy).then(() => {
-            const originalHTML = copyBtn.innerHTML;
-            copyBtn.innerHTML = '<span class="icon">✅</span> 복사 완료!';
-            copyBtn.classList.add('success');
-            copyBtn.style.backgroundColor = '#dcfce7';
-            copyBtn.style.borderColor = '#86efac';
+            const btnText = copyBtn.querySelector('.btn-text');
+            const icon = copyBtn.querySelector('.icon');
+            const originalText = btnText.textContent;
+            const originalIcon = icon.textContent;
+
+            btnText.textContent = '복사 완료!';
+            icon.textContent = '✅';
+            copyBtn.classList.add('bg-green-500', 'text-white', 'border-green-500');
+            copyBtn.classList.remove('bg-white', 'text-blue-600', 'border-blue-200');
             
             setTimeout(() => {
-                copyBtn.innerHTML = originalHTML;
-                copyBtn.style.backgroundColor = '';
-                copyBtn.style.borderColor = '';
-                copyBtn.classList.remove('success');
+                btnText.textContent = originalText;
+                icon.textContent = originalIcon;
+                copyBtn.classList.remove('bg-green-500', 'text-white', 'border-green-500');
+                copyBtn.classList.add('bg-white', 'text-blue-600', 'border-blue-200');
             }, 2000);
         }).catch(err => {
             console.error('복사 실패:', err);
@@ -132,27 +142,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 4. Feedback Logic
     feedbackBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        btn.addEventListener('click', async (e) => {
             const button = e.currentTarget;
             const type = button.dataset.type;
             
             // Visual feedback for selection
-            feedbackBtns.forEach(b => b.style.opacity = '0.3');
-            button.style.opacity = '1';
-            button.style.transform = 'scale(1.2)';
+            feedbackBtns.forEach(b => {
+                b.classList.add('opacity-50');
+                b.classList.remove('bg-white', 'shadow-md');
+            });
+            button.classList.remove('opacity-50');
+            button.classList.add('bg-white', 'shadow-md', 'scale-110');
             
-            // In a real app, you would send this to the backend
-            console.log(`Feedback received: ${type}`);
+            // Send feedback to backend
+            try {
+                await fetch('/api/feedback', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        type: type,
+                        original: originalTextDisplay.textContent,
+                        converted: convertedTextDisplay.textContent
+                    })
+                });
+                console.log(`Feedback sent: ${type}`);
+            } catch (error) {
+                console.error('Feedback Error:', error);
+            }
             
-            // Show a small toast or message instead of alert
-            const feedbackArea = document.querySelector('.feedback-area');
-            const originalContent = feedbackArea.innerHTML;
-            feedbackArea.innerHTML = '<p>피드백 감사합니다! 더 나은 서비스를 위해 노력하겠습니다. ✨</p>';
+            const feedbackArea = button.closest('div').parentElement;
+            const originalHTML = feedbackArea.innerHTML;
+            feedbackArea.innerHTML = '<p class="text-blue-600 font-medium py-4 fade-in">피드백 감사합니다! 더 나은 서비스를 위해 노력하겠습니다. ✨</p>';
             
             setTimeout(() => {
-                feedbackArea.innerHTML = originalContent;
-                // Re-bind events if necessary, but here we just leave it for simplicity
-                // In a production app, we might just hide the feedback area after use.
+                feedbackArea.innerHTML = originalHTML;
             }, 3000);
         });
     });
