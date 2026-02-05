@@ -1,0 +1,145 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Flask 백엔드 및 가상 환경 구축",
+        "description": "Python 3.11 및 Flask 2.3.x를 기반으로 프로젝트 폴더 구조를 설정하고 의존성을 관리합니다.",
+        "details": "1. `venv` 생성 및 `Flask`, `python-dotenv`, `groq` 패키지 설치\n2. `app.py` 초기화 및 기본 Flask 앱 구조 생성\n3. 프로젝트 루트에 `api/` 디렉토리와 정적 파일을 위한 `static/`, `templates/` 폴더 구성\n4. `.env` 파일을 생성하여 API 키 관리를 위한 기반 마련",
+        "testStrategy": "Flask 서버를 실행하고 `http://localhost:5000`에서 기본 'Hello World' 또는 인덱스 페이지가 정상적으로 출력되는지 확인",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "반응형 메인 UI 마크업 및 스타일링",
+        "description": "HTML5와 CSS3를 사용하여 PRD에 정의된 입력창, 드롭다운, 결과창이 포함된 레이아웃을 제작합니다.",
+        "details": "1. `index.html`: 대상 선택 드롭다운(상사, 동료, 고객), 텍스트 입력 영역(textarea), 변환 버튼, 결과 표시 영역 마크업\n2. `style.css`: Flexbox와 Grid를 사용하여 PC(좌우 비교) 및 모바일(상하 비교) 대응 반응형 디자인 구현\n3. ARIA 라벨을 추가하여 웹 접근성 준수",
+        "testStrategy": "브라우저 개발자 도구를 통해 데스크톱과 모바일 해상도에서 레이아웃이 깨지지 않고 정상적으로 표시되는지 확인",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Groq AI API 연동 및 클라이언트 설정",
+        "description": "Groq AI API를 호출하기 위한 유틸리티 클래스 또는 함수를 작성합니다.",
+        "details": "1. `groq` 라이브러리를 사용하여 API 클라이언트 초기화\n2. Vercel 환경 변수에서 `GROQ_API_KEY`를 가져오도록 설정\n3. 모델 설정(예: llama3-70b-8192) 및 기본적인 채팅 완성을 수행하는 함수 구현",
+        "testStrategy": "별도의 테스트 스크립트를 작성하여 Groq API에 간단한 프롬프트를 보내고 응답이 정상적으로 반환되는지 확인",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "대상별 비즈니스 말투 프롬프트 엔지니어링",
+        "description": "상사, 동료, 고객 대상별로 최적화된 시스템 프롬프트를 정의합니다.",
+        "details": "1. 상사: 격식체, 결론 위주 보고 형식 강조\n2. 동료: 정중한 해요체, 협업 및 유연한 어조 강조\n3. 고객: 극존칭 경어, 서비스 지향적 답변 양식 적용\n4. 프롬프트를 Python 딕셔너리 형태로 `prompts.py`에 관리",
+        "testStrategy": "동일한 일상 문장을 각 프롬프트에 적용했을 때 의도한 말투(격식체/정중함 등)로 변환되는지 수동 검증",
+        "priority": "medium",
+        "dependencies": [
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "텍스트 변환 API 엔드포인트 구현",
+        "description": "사용자의 입력을 받아 AI 변환 결과를 반환하는 `/api/convert` POST 라우트를 구현합니다.",
+        "details": "1. Flask `POST` 메소드 핸들러 생성\n2. [FR-03] 입력 텍스트 유효성 검사 (비어있음 확인 및 최대 500자 제한)\n3. 요청에서 `target`(상사/동료/고객)을 추출하여 해당 시스템 프롬프트 선택\n4. Groq API 호출 후 변환된 텍스트를 JSON 형태로 반환",
+        "testStrategy": "Postman 또는 cURL을 사용하여 원본 텍스트와 대상을 전송하고, 변환된 텍스트가 담긴 JSON 응답이 오는지 확인",
+        "priority": "high",
+        "dependencies": [
+          3,
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "프론트엔드 비동기 통신 로직 개발",
+        "description": "Vanilla JavaScript를 사용하여 백엔드 API와 통신하고 UI를 업데이트합니다.",
+        "details": "1. '변환하기' 버튼 클릭 이벤트 리스너 등록\n2. `fetch` API를 사용하여 `/api/convert` 호출\n3. 변환 중 로딩 상태 표시(Spinner 또는 텍스트 변경)\n4. 성공 시 결과 영역에 변환된 텍스트 렌더링 및 에러 발생 시 경고창 표시",
+        "testStrategy": "웹 페이지에서 텍스트 입력 후 버튼을 눌러 로딩 표시가 나타나고 결과가 화면에 올바르게 출력되는지 확인",
+        "priority": "high",
+        "dependencies": [
+          2,
+          5
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "실시간 글자 수 검사 및 유효성 피드백 기능",
+        "description": "사용자가 입력하는 동안 글자 수를 체크하여 UI에 표시하고 제한을 강제합니다.",
+        "details": "1. `input` 또는 `keyup` 이벤트를 감지하여 현재 글자 수 업데이트\n2. 500자 초과 시 텍스트 색상을 빨간색으로 변경하고 변환 버튼 비활성화\n3. 경고 메시지 표시 로직 구현",
+        "testStrategy": "500자 이상의 텍스트를 붙여넣었을 때 경고가 뜨고 변환 버튼이 차단되는지 확인",
+        "priority": "low",
+        "dependencies": [
+          2,
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "결과 복사 및 피드백 기능 구현",
+        "description": "변환된 텍스트를 클립보드에 복사하고 결과에 대한 좋아요/싫어요 기능을 추가합니다.",
+        "details": "1. `navigator.clipboard.writeText`를 이용한 한 번의 클릭으로 결과 복사 기능 구현\n2. 복사 성공 시 '복사됨' 토스트 알림 표시\n3. 결과 하단에 '좋아요/싫어요' 버튼 추가 및 클릭 시 UI 피드백(색상 변경 등)",
+        "testStrategy": "복사 버튼 클릭 후 메모장에 붙여넣기가 정상적으로 되는지 확인하고, 피드백 버튼 동작 여부 확인",
+        "priority": "medium",
+        "dependencies": [
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "예외 처리 및 성능 최적화",
+        "description": "API 호출 실패 및 타임아웃 등 예외 상황에 대응하는 로직을 강화합니다.",
+        "details": "1. Groq API 응답 지연 시 타임아웃 처리 (최대 10초)\n2. API 키 오류 또는 할당량 초과 시 사용자 친화적인 에러 메시지 노출\n3. 결과 표시 영역에 '원본 vs 변환' 비교 레이아웃 다듬기",
+        "testStrategy": "인위적으로 API 키를 무효화하거나 네트워크 연결을 끊었을 때 적절한 에러 UI가 표시되는지 확인",
+        "priority": "medium",
+        "dependencies": [
+          5,
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Vercel 배포 설정 및 환경 구축",
+        "description": "Vercel 플랫폼에 배포하기 위한 설정 파일을 생성하고 배포를 진행합니다.",
+        "details": "1. `vercel.json` 설정 파일 작성 (Python Runtime 및 Route 설정)\n2. `requirements.txt` 파일 생성하여 의존성 목록 최신화\n3. Vercel Dashboard에서 환경 변수(`GROQ_API_KEY`) 등록\n4. 최종 배포 및 도메인 연결 확인",
+        "testStrategy": "배포된 URL에 접속하여 모든 기능(입력, 변환, 복사)이 실제 운영 환경에서 정상 작동하는지 확인",
+        "priority": "high",
+        "dependencies": [
+          1,
+          5,
+          8
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2026-02-05T05:08:24.269Z",
+      "updated": "2026-02-05T05:08:24.269Z",
+      "description": "Tasks for master context"
+    }
+  }
+}
